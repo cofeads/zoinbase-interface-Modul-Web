@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZOINBASE LIQUID | ULTRA NEON</title>
+    <style>
+        /* --- GRUNDLEGENDE VARS & RESET --- */
+        :root {
+            --neon-purple: #b026ff;
+            --neon-white: #f5e1ff;
+            --bg-black: #050505;
+            --card-bg: rgba(20, 0, 30, 0.4);
+            --font-hacker: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: #fff;
+            font-family: var(--font-hacker);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- SCANLINE OVERLAY (Retro Monitor Effekt) --- */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 2px,
+                rgba(0, 0, 0, 0.3) 3px
+            );
+            pointer-events: none;
+            z-index: 90;
+        }
+
+        /* --- LIQUID BACKGROUND (Die Blobs) --- */
+        .liquid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: url('#goo'); /* Der Verschmelzungs-Effekt */
+            opacity: 0.5;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--neon-purple);
+            animation: blobMove 15s infinite alternate ease-in-out;
+            opacity: 0.8;
+            box-shadow: 0 0 30px var(--neon-purple);
+        }
+
+        .blob:nth-child(1) { width: 350px; height: 350px; top: -50px; left: -50px; background: #8a00e0; }
+        .blob:nth-child(2) { width: 250px; height: 250px; bottom: 10%; right: 10%; animation-duration: 20s; }
+        .blob:nth-child(3) { width: 150px; height: 150px; top: 40%; left: 40%; background: #dda0ff; animation-duration: 12s; }
+
+        @keyframes blobMove {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, -60px) scale(1.1); }
+        }
+
+        /* --- ULTRA NEON HACKER LOGO --- */
+        header {
+            margin-top: 60px;
+            margin-bottom: 40px;
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .hacker-logo {
+            font-size: 4.5rem; /* Groß */
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            position: relative;
+            display: inline-block;
+            
+            /* 1. Der flüssige Farbverlauf IM Text */
+            background: linear-gradient(
+                90deg, 
+                var(--neon-purple) 0%, 
+                #ffffff 50%, 
+                var(--neon-purple) 100%
+            );
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            
+            /* Animation für den Fluss */
+            animation: shineText 3s linear infinite;
+
+            /* 2. Der extreme Schein (Glow) */
+            text-shadow: 
+                0 0 10px rgba(255,255,255, 0.5),
+                0 0 20px rgba(176, 38, 255, 0.6),
+                0 0 40px rgba(176, 38, 255, 0.8),
+                0 0 80px rgba(176, 38, 255, 1);
+        }
+
+        /* Glitch Animation (Flackern) */
+        .hacker-logo:hover {
+            animation: shineText 0.5s linear infinite, glitch 0.3s infinite;
+        }
+
+        .hacker-logo::before {
+            content: '>_';
+            position: absolute;
+            left: -60px;
+            color: var(--neon-purple);
+            text-shadow: 0 0 20px var(--neon-purple);
+            animation: blink 1s step-end infinite;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ccc;
+            letter-spacing: 4px;
+            text-shadow: 0 0 5px var(--neon-purple);
+            margin-top: 10px;
+            text-transform: lowercase;
+        }
+
+        @keyframes shineText {
+            to { background-position: 200% center; }
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0,0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, 0); }
+            80% { transform: translate(2px, 0); }
+            100% { transform: translate(0,0); }
+        }
+
+        /* --- ABO KARTEN --- */
+        .pricing-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            max-width: 1400px;
+            padding: 20px;
+            z-index: 5;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(176, 38, 255, 0.3);
+            border-radius: 12px;
+            width: 260px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: scale(1.05) translateY(-10px);
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 40px rgba(176, 38, 255, 0.4), inset 0 0 20px rgba(176, 38, 255, 0.1);
+        }
+
+        .card h3 {
+            color: var(--neon-purple);
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--neon-purple);
+        }
+
+        .price {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #fff;
+        }
+
+        .features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 25px;
+            font-size: 0.85rem;
+            color: #ddd;
+            line-height: 1.6;
+        }
+
+        .features li::before {
+            content: '>> ';
+            color: var(--neon-purple);
+        }
+
+        /* --- LIQUID BUTTON --- */
+        .btn-liquid {
+            position: relative;
+            padding: 12px 25px;
+            background: transparent;
+            border: 2px solid var(--neon-purple);
+            color: #fff;
+            font-family: var(--font-hacker);
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 4px;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(176, 38, 255, 0.2);
+        }
+
+        .btn-liquid .inner-liquid {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--neon-purple);
+            transition: all 0.5s ease-in-out;
+            z-index: -1;
+            border-radius: 60% 60% 0 0;
+        }
+
+        .btn-liquid:hover {
+            box-shadow: 0 0 25px var(--neon-purple);
+            text-shadow: 0 0 5px #fff;
+            border-color: #fff;
+        }
+
+        .btn-liquid:hover .inner-liquid {
+            top: 0;
+            border-radius: 0;
+            transform: scale(1.1);
+        }
+
+        /* Button Text muss über der Flüssigkeit sein */
+        .btn-liquid span {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- MODAL (PAYMENT) --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: #0a0a0a;
+            border: 1px solid var(--neon-purple);
+            padding: 40px;
+            border-radius: 5px;
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 0 80px rgba(176, 38, 255, 0.3);
+            position: relative;
+            animation: modalEntry 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalEntry {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .close-btn:hover { color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); }
+
+        .qr-frame {
+            border: 2px dashed var(--neon-purple);
+            padding: 10px;
+            display: inline-block;
+            margin: 20px 0;
+            background: #fff;
+        }
+
+        /* WICHTIG: Anpassung für das <img> Element */
+        .qr-code {
+            width: 180px;
+            height: 180px;
+            display: block; 
+        }
+
+        .wallet-box {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: var(--neon-purple);
+            padding: 12px;
+            font-size: 0.8rem;
+            word-break: break-all;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 10px #000;
+        }
+
+        .copy-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--neon-purple);
+            color: #fff;
+            border: none;
+            font-weight: bold;
+            font-family: var(--font-hacker);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #fff;
+            color: var(--neon-purple);
+            box-shadow: 0 0 20px #fff;
+        }
+
+        /* SVG Filter (Unsichtbar im Layout) */
+        svg.filters { display: none; }
+
+    </style>
+</head>
+<body>
+
+    <div class="scanlines"></div>
+
+    <div class="liquid-bg">
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+    </div>
+
+    <svg class="filters">
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+                <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+            </filter>
+        </defs>
+    </svg>
+
+    <header>
+        <div class="hacker-logo">ZOINBASE</div>
+        <div class="subtitle">/// liquid_access_granted ///</div>
+    </header>
+
+    <section class="pricing-section">
+        <div class="card">
+            <h3>Newbie</h3>
+            <div class="price">€15</div>
+            <ul class="features">
+                <li>Basis Zugang</li>
+                <li>Low Speed</li>
+                <li>Community Support</li>
+            </ul>
+            <button class="btn-liquid" onclick="openPayment('Newbie', '15')">
+                <span>Access</span>
+                <div class="inner-liquid"></div>
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>Runner</h3>
+            <div class="price">€40</div>
+            <ul class="features">
+                <li>Schneller Proxy</li>
+                <li>2 Geräte</li>
+                <li>Keine Logs</li>
+            </ul>
+            <button class="btn-liquid" onclick="openPayment('Runner', '40')">
+                <span>Access</span>
+                <div class="inner-liquid"></div>
+            </button>
+        </div>
+
+        <div class="card" style="border-color:var(--neon-purple); box-shadow: 0 0 25px rgba(176,38,255,0.2);">
+            <h3 style="text-shadow: 0 0 20px white;">Phantom</h3>
+            <div class="price">€80</div>
+            <ul class="features">
+                <li>High Speed Liquid</li>
+                <li>5 Geräte</li>
+                <li>Prio Support</li>
+                <li><b style="color:#fff">Hacker Tools</b></li>
+            </ul>
+            <button class="btn-liquid" onclick="openPayment('Phantom', '80')">
+                <span>Access</span>
+                <div class="inner-liquid"></div>
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>God Mode</h3>
+            <div class="price">€200</div>
+            <ul class="features">
+                <li>Dedizierter Server</li>
+                <li>Unbegrenzte Geräte</li>
+                <li>1-zu-1 Support</li>
+                <li>Full API Access</li>
+            </ul>
+            <button class="btn-liquid" onclick="openPayment('God Mode', '200')">
+                <span>Access</span>
+                <div class="inner-liquid"></div>
+            </button>
+        </div>
+    </section>
+
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 style="color:var(--neon-purple); margin-bottom:10px;">SECURE CHECKOUT</h2>
+            <p id="modal-plan-info" style="color:#aaa; font-size:0.9rem;">...</p>
+            
+            <div class="qr-frame">
+                <img id="qrcode-img" src="qrcode.png" alt="QR Code" class="qr-code">
+            </div>
+
+            <p style="font-size:0.8rem; margin-bottom:5px;">Sende exakt den Betrag in LTC an:</p>
+            <div class="wallet-box" id="wallet-address">
+                LtcWalletAdresseHierEinfuegen123XYZ
+            </div>
+
+            <button class="copy-btn" onclick="copyToClipboard()">
+                Adresse Kopieren
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- KONFIGURATION ---
+        const myLtcAddress = "ltc1q6jgu3x2qvjac4armynajl963xjdu2tzjl5da3y"; 
+        
+        // --- LOGIK ---
+        const modal = document.getElementById('paymentModal');
+        const walletDisplay = document.getElementById('wallet-address');
+        const planInfo = document.getElementById('modal-plan-info');
+
+        // Initiale Adresse setzen
+        walletDisplay.textContent = myLtcAddress;
+
+        function openPayment(planName, price) {
+            modal.style.display = 'flex';
+            planInfo.innerHTML = `PLAN: <b style="color:#fff">${planName}</b> | TOTAL: <b style="color:#fff">€${price}</b> (in LTC)`;
+            
+            // Der QR-Code wird nun statisch über das <img>-Tag geladen (src="qrcode.png")
+            // Es ist kein JavaScript nötig, um das Bild zu setzen.
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(myLtcAddress).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const oldText = btn.textContent;
+                
+                btn.textContent = "KOPIERT!";
+                btn.style.backgroundColor = "#fff";
+                btn.style.color = "#000";
+                
+                setTimeout(() => {
+                    btn.textContent = oldText;
+                    btn.style.backgroundColor = "var(--neon-purple)";
+                    btn.style.color = "#fff";
+                }, 2000);
+            }).catch(err => {
+                alert("Fehler beim Kopieren!");
+            });
+        }
+
+        // Klick außerhalb schließt Modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
